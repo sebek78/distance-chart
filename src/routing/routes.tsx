@@ -1,6 +1,12 @@
 import { Outlet, Route, RootRoute } from "@tanstack/react-router";
 import { ExchangeTokenPage, Homepage } from "../components/pages";
 
+interface TokenParams {
+  state: string;
+  code: string;
+  scope: "read";
+}
+
 function Root() {
   return <Outlet />;
 }
@@ -15,10 +21,17 @@ const indexRoute = new Route({
   component: Homepage,
 });
 
-const exchangeTokenRoute = new Route({
+export const exchangeTokenRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/exchange_token",
   component: ExchangeTokenPage,
+  validateSearch: (search: Record<string, unknown>): TokenParams => {
+    return {
+      state: search.state || "",
+      code: search.code || "",
+      scope: search.scope || "read",
+    } as TokenParams;
+  },
 });
 
 export const routeTree = rootRoute.addChildren([
