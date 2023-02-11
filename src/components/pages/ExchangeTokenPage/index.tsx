@@ -1,37 +1,29 @@
-import { useSearch } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useApiQuery } from "../../../hooks/use-api-query";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { exchangeTokenRoute } from "../../../routing/routes";
-import { tokensUrl } from "../../../utils/url";
-import { DetailedAthlete } from "../../../types/athlete";
+import { useTokens } from "../../../hooks/use-tokens";
 
 export function ExchangeTokenPage() {
-  const { state, code, scope } = useSearch({ from: exchangeTokenRoute.id });
-
-  const { data, error, isError, isLoading, isSuccess } =
-    useApiQuery<DetailedAthlete>(
-      "athleteData",
-      tokensUrl(code),
-      {
-        enabled: code !== "",
-      },
-      {
-        method: "post",
-      }
-    );
+  const navigate = useNavigate({ from: "/exchange_token" });
+  const { code } = useSearch({ from: exchangeTokenRoute.id });
+  const { isLoading, isError, error, isSuccess } = useTokens(code);
 
   useEffect(() => {
-    console.log(state, code, scope);
-  }, []);
-
-  useEffect(() => {
-    console.log(data);
-    console.log(error);
-  }, [data, error]);
+    if (isSuccess) {
+      navigate({ to: "/main" });
+    }
+  }, [isSuccess]);
 
   if (isLoading) return <div>Login in progress...</div>;
 
-  if (error && error.message) return <div>{error.message}</div>;
+  if (isError) {
+    return (
+      <>
+        <Link to="/">Home</Link>
+        <div>{error?.message || "Something went wrong."}</div>
+      </>
+    );
+  }
 
-  return <div>Done</div>;
+  return null;
 }

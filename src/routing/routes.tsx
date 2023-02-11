@@ -1,5 +1,5 @@
 import { Outlet, Route, RootRoute } from "@tanstack/react-router";
-import { ExchangeTokenPage, Homepage } from "../components/pages";
+import { ExchangeTokenPage, Homepage, MainPage } from "../components/pages";
 
 interface TokenParams {
   state: string;
@@ -34,7 +34,14 @@ export const exchangeTokenRoute = new Route({
   },
 });
 
+const mainPageRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/main",
+  component: MainPage,
+});
+
 export const routeTree = rootRoute.addChildren([
   indexRoute,
   exchangeTokenRoute,
+  mainPageRoute,
 ]);
