@@ -1,22 +1,24 @@
 import { useSearch } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useApiQuery } from "../../../hooks/use-api-query";
 import { exchangeTokenRoute } from "../../../routing/routes";
 import { tokensUrl } from "../../../utils/url";
+import { DetailedAthlete } from "../../../types/athlete";
 
 export function ExchangeTokenPage() {
   const { state, code, scope } = useSearch({ from: exchangeTokenRoute.id });
 
-  const { isLoading, error, data } = useQuery(
-    "athleteData",
-    () =>
-      fetch(tokensUrl(code), {
-        method: "POST",
-      }).then((res) => res.json()),
-    {
-      enabled: code !== "",
-    }
-  );
+  const { data, error, isError, isLoading, isSuccess } =
+    useApiQuery<DetailedAthlete>(
+      "athleteData",
+      tokensUrl(code),
+      {
+        enabled: code !== "",
+      },
+      {
+        method: "post",
+      }
+    );
 
   useEffect(() => {
     console.log(state, code, scope);
@@ -24,11 +26,12 @@ export function ExchangeTokenPage() {
 
   useEffect(() => {
     console.log(data);
-  }, [data]);
+    console.log(error);
+  }, [data, error]);
 
   if (isLoading) return <div>Login in progress...</div>;
 
-  if (error) return "An error has occurred";
+  if (error && error.message) return <div>{error.message}</div>;
 
   return <div>Done</div>;
 }

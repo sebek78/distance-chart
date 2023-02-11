@@ -3,7 +3,7 @@ const clientId = "client_id=12345678"; // your client id
 
 const resType = "response_type=code";
 const redirect = "redirect_uri=http://localhost:5173/exchange_token";
-const params = "approval_prompt=force&scope=read";
+const params = "approval_prompt=force&scope=read_all";
 
 const authUrl = `${baseUrl}/authorize?${clientId}&${resType}&${redirect}&${params}`;
 
